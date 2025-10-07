@@ -1,0 +1,12 @@
+{
+  "User": {
+    "fields": [
+      "id",
+      "username",
+      "lastname",
+      "firstname",
+      "age",
+      "is_active"
+    ]
+  }
+}

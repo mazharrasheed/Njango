@@ -1,0 +1,48 @@
+
+
+
+.register-form {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #cfe2f5;
+}
+
+.register-form input{
+    background-color: aliceblue;
+    border-radius: 0px !important;
+    padding: 15px;
+}
+
+
+.login-form {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #cfe2f5
+}
+.login-form input{
+   background-color: aliceblue;
+    border-radius: 0px !important;
+    padding: 15px;
+}
+
+.card {
+  
+    border: none !important;
+  
+}
+
+.card:hover {
+    /* transform: scale(1.01);
+    transition: transform 0.2s; */
+    border: 3px solid #cfe2f5 !important;
+    border-radius: 0px !important;
+    box-shadow:  5px 5px 5px rgba(0, 0, 0, 0.1);
+}
+.nav-bg {
+    background-color: #cfe2f5 !important;
+    color: white !important;
+}   
