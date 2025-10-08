@@ -4,6 +4,7 @@ import cors from 'cors';
 import { urls } from "./urls.js";
 import { authenticate } from "./middlewares/Authmiddleware.js";
 import { user,permissions } from "./../apps/auth/views.js";
+import { permissionRequired } from "./middlewares/permissions.js";
 
 import { fileURLToPath } from "url";
 import path from "path";
@@ -13,10 +14,8 @@ import { createRequire } from "module";
 // ✅ Load environment variables early
 dotenv.config();
 
-  console.log('app')
 export function startServer() {
   const app = express();
-  console.log('app type:', typeof app);
   // const PORT = 3000;
   const PORT = process.env.PORT || 3000;
  
@@ -30,16 +29,17 @@ app.use(cors({
 
   app.use(express.json());
 
+  app.use(authenticate)
+
   app.get("/", (req, res) => {
     res.send("Njango Server Running 🚀");
     console.log("Server is running on http://localhost:" + PORT);
   });
 
-
   // GET user (protected)
 
   app.get("/user", authenticate, user);
-  app.get("/permissions", permissions);
+  app.get("/permissions",permissionRequired("view_posts"), permissions);
 
   // Loop through urls.js and register routes
   urls.forEach((route) => {

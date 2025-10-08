@@ -42,12 +42,12 @@ export default function UserManagement() {
           permissions:
             typeof user.permissions === "string"
               ? (() => {
-                  try {
-                    return JSON.parse(user.permissions);
-                  } catch {
-                    return user.permissions.split(",").map((p) => p.trim());
-                  }
-                })()
+                try {
+                  return JSON.parse(user.permissions);
+                } catch {
+                  return user.permissions.split(",").map((p) => p.trim());
+                }
+              })()
               : user.permissions || []
         }));
         setUsers(cleanUsers);
@@ -74,8 +74,8 @@ export default function UserManagement() {
     setForm((prev) => {
       const current =
         Array.isArray(prev.permissions) ||
-        prev.permissions === null ||
-        prev.permissions === undefined
+          prev.permissions === null ||
+          prev.permissions === undefined
           ? prev.permissions || []
           : JSON.parse(prev.permissions || "[]");
 
@@ -141,12 +141,12 @@ export default function UserManagement() {
       permissions: Array.isArray(user.permissions)
         ? user.permissions
         : (() => {
-            try {
-              return JSON.parse(user.permissions || "[]");
-            } catch {
-              return user.permissions.split(",").map((p) => p.trim());
-            }
-          })()
+          try {
+            return JSON.parse(user.permissions || "[]");
+          } catch {
+            return user.permissions.split(",").map((p) => p.trim());
+          }
+        })()
     });
   };
 
@@ -179,50 +179,51 @@ export default function UserManagement() {
 
       <form onSubmit={handleSubmit} className="mb-4">
         {/* Username */}
-        <div className="mb-3">
-          <label className="form-label">Username</label>
-          <input
-            type="text"
-            name="username"
-            value={form.username}
-            onChange={handleChange}
-            className="form-control"
-            required
-          />
-        </div>
-
-        {/* Password (only for new user) */}
-        {!form.id && (
-          <div className="mb-3">
-            <label className="form-label">Password</label>
+        <div className="row">
+          <div className="mb-3 col-md-4">
+            <label className="form-label">Username</label>
             <input
-              type="password"
-              name="password"
-              value={form.password}
+              type="text"
+              name="username"
+              value={form.username}
               onChange={handleChange}
               className="form-control"
               required
             />
           </div>
-        )}
 
-        {/* Role */}
-        <div className="mb-3">
-          <label className="form-label">Role</label>
-          <select
-            name="role"
-            value={form.role}
-            onChange={handleChange}
-            className="form-select"
-          >
-            {Object.keys(permissionsData.rolePermissions || {}).map((role) => (
-              <option key={role} value={role}>
-                {role}
-              </option>
-            ))}
-          </select>
+          {/* Password (only for new user) */}
+          {!form.id && (
+            <div className="mb-3 col-md-4">
+              <label className="form-label">Password</label>
+              <input
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                className="form-control"
+                required
+              />
+            </div>
+          )}
+
+          {/* Role */}
+          <div className="mb-3 col-md-4">
+            <label className="form-label">Role</label>
+            <select
+              name="role"
+              value={form.role}
+              onChange={handleChange}
+              className="form-select"
+            >
+              {Object.keys(permissionsData.rolePermissions || {}).map((role) => (
+                <option key={role} value={role}>
+                  {role}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-
         {/* Permissions */}
         <div className="mb-3 container">
           <label className="form-label">Permissions</label>
@@ -282,10 +283,10 @@ export default function UserManagement() {
                   <td style={{ maxWidth: "250px", whiteSpace: "normal" }}>
                     {Array.isArray(user.permissions)
                       ? user.permissions.map((perm, i) => (
-                          <span key={i} className="badge bg-secondary me-1">
-                            {perm}
-                          </span>
-                        ))
+                        <span key={i} className="badge bg-secondary me-1">
+                          {perm}
+                        </span>
+                      ))
                       : ""}
                   </td>
                   <td className="d-flex justify-content-end">

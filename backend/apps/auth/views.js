@@ -8,11 +8,8 @@ dotenv.config(); // ensure env variables loaded here too
 export async function profile(req, res) {
   try {
      const { id } = req.params;
-    const { username, password, role, permissions } = req.body;
-
     if (!id) return res.status(400).json({ error: "User ID required" });
     const user = await User.objects.get({id:id})
-    console.log('prifile',user)
     if (!user) return res.status(404).json({ error: "User not found" });
     res.json({
       success: true,

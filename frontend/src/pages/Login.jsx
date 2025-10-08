@@ -46,7 +46,7 @@ export default function Login() {
   return (
     <div className='container mt-5'>
       <div className='login-form p-4 border rounded'>
-        <h1 className='card-header'>Login</h1>
+        <h1 className='card-header'><img className='me-3' src="/Njango-logo-img.png" width={100} alt="" />Login</h1>
         <form onSubmit={handleSubmit}>
           <input
             className='form-control mt-3'

@@ -42,7 +42,7 @@ export default function Register() {
   return (
     <div className='container mt-5'>
       <div className='register-form p-4'>
-        <h1 className='card-header'>Register</h1>
+        <h1 className='card-header'><img className='me-3' src="/Njango-logo-img.png" width={100} alt="" />Register</h1>
         <form onSubmit={handleSubmit}>
           <input className='form-control mt-3' name="username" placeholder="Username" onChange={handleChange} required  />
           <input className='form-control mt-3' name="firstName" placeholder="First Name" onChange={handleChange} required />

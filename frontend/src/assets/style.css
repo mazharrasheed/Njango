@@ -29,10 +29,10 @@
     padding: 15px;
 }
 
-.card {
-  
-    border: none !important;
-  
+.card{
+    border-radius: 5px !important;
+    box-shadow:  5px 5px 5px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
 }
 
 .card:hover {

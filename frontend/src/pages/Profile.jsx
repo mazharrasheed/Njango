@@ -56,7 +56,7 @@ fetchUser()
       <p>Welcome, <strong>{user.firstName} {user.lastName}</strong>!</p>
       <p>Username: {user.username}</p>
       <p>Role: {user.role}</p>
-      <Link className="btn btn-info " to="/posts">Posts</Link>
+      <Link className="btn btn-info " to="/blog">Posts</Link>
     </div>
 
     

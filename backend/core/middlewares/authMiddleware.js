@@ -1,26 +1,23 @@
+// backend/middleware/auth.js
 import jwt from "jsonwebtoken";
+import { User } from "../../apps/auth/models/user.js"; // adjust path
 
-export function authenticate(req, res, next) {
-    console.log('i m authenticate middleware')
-    // console.log("JWT_SECRET:", process.env.JWT_SECRET);
-  const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "No token provided" });
-  }
-
-  const token = authHeader.split(" ")[1];
+export async function authenticate(req, res, next) {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return next();
 
   try {
-    // ✅ Verify the JWT token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userData = await User.objects.get({ id: decoded.id });
 
-    // ✅ Attach decoded user to request
-    req.user = decoded;
-
-    next(); // continue to controller
+    if (userData) {
+      // Force it into a proper User model instance
+      req.user = Object.assign(new User(), userData);
+    }
   } catch (err) {
-    console.error("JWT error:", err);
-    res.status(401).json({ error: "Invalid or expired token" });
+    console.error("Auth error:", err);
   }
+
+  next();
 }
