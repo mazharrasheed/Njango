@@ -1,13 +1,13 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { runQuery, runExecute } from "../core/db.js";
+import { runQuery, runExecute } from "../../core/db.js";
 // import { defaultPermissions, customPermissions, rolePermissions } from '../core/permissionsConfig.js';
 import { User } from "./models/user.js";
-import { defaultPermissions, customPermissions, rolePermissions} from "../core/orm/permissionsConfig.js";
+import { defaultPermissions, customPermissions, rolePermissions} from "../../core/orm/permissionsConfig.js";
 import dotenv from "dotenv";
 dotenv.config(); // ensure env variables loaded here too
 
-import { authenticate } from "../core/middlewares/Authmiddleware.js";
+import { authenticate } from "../../core/middlewares/Authmiddleware.js";
 
 const SECRET_KEY = "supersecret"; // in real projects use env var
 

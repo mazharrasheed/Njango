@@ -1,7 +1,7 @@
 
 // auth/urls.js
 import { register, login, logout,users,createUser,updateUser,profile} from "./views.js";
-import { authenticate } from "../core/middlewares/Authmiddleware.js";
+import { authenticate } from "../../core/middlewares/Authmiddleware.js";
 
 export const authUrls = [
   { method: "put",  path: "/auth/updateuser/:id",   view: updateUser, name: "updateuser" },

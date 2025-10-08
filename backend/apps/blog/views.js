@@ -1,4 +1,4 @@
-import { runQuery, runExecute } from "../core/db.js";
+import { runQuery, runExecute } from "../../core/db.js";
 
 // blog/views.js
 

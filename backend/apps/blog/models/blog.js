@@ -1,5 +1,5 @@
-import * as fields from "../../core/orm/fields.js";
-import { Model } from "../../core/orm/models.js";
+import * as fields from "../../../core/orm/fields.js";
+import { Model } from "../../../core/orm/models.js";
 import { User } from "../../auth/models/user.js";
 
 export class Blog extends Model {

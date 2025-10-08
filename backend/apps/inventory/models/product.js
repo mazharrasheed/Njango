@@ -1,5 +1,5 @@
-import { Model } from "../../core/orm/models.js";
-import * as fields from "../../core/orm/fields.js";
+import { Model } from "../../../core/orm/models.js";
+import * as fields from "../../../core/orm/fields.js";
 
 
 export class Product extends Model {

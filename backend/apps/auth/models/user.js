@@ -1,5 +1,5 @@
-import * as fields from "../../core/orm/fields.js";
-import { Model } from "../../core/orm/models.js";
+import * as fields from "../../../core/orm/fields.js";
+import { Model } from "../../../core/orm/models.js";
 
 export class User extends Model {
     static table = "users";   // ✅ use `table` instead of `tableName`

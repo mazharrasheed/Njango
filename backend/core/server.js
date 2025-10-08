@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import { urls } from "./urls.js";
 import { authenticate } from "./middlewares/Authmiddleware.js";
-import { user,permissions } from "../auth/views.js";
+import { user,permissions } from "./../apps/auth/views.js";
 
 
 // ✅ Load environment variables early
