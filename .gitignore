@@ -1,1 +1,32 @@
-node_modules
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build files
+dist/
+build/
+*.log
+
+# Python / Django
+
+*.sqlite3
+db.sqlite3
+njango.sqlite3
+
+# Environment
+.env
+.env.*
+
+# VSCode / IDEs
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Custom local files
+test.js
+migrations
