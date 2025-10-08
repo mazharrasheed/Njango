@@ -1,16 +1,9 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { runQuery, runExecute } from "../../core/db.js";
-// import { defaultPermissions, customPermissions, rolePermissions } from '../core/permissionsConfig.js';
 import { User } from "./models/user.js";
 import { defaultPermissions, customPermissions, rolePermissions} from "../../core/orm/permissionsConfig.js";
 import dotenv from "dotenv";
 dotenv.config(); // ensure env variables loaded here too
-
-import { authenticate } from "../../core/middlewares/Authmiddleware.js";
-
-const SECRET_KEY = "supersecret"; // in real projects use env var
-
 
 export async function profile(req, res) {
   try {
@@ -18,8 +11,6 @@ export async function profile(req, res) {
     const { username, password, role, permissions } = req.body;
 
     if (!id) return res.status(400).json({ error: "User ID required" });
-
-    // const user = runQuery("SELECT * FROM users WHERE id = ?", [id]);
     const user = await User.objects.get({id:id})
     console.log('prifile',user)
     if (!user) return res.status(404).json({ error: "User not found" });
@@ -32,7 +23,6 @@ export async function profile(req, res) {
     res.status(500).json({ error: "Internal server error" });
   }
 }
-
 
 export async function user(req, res) {
   try {
@@ -51,7 +41,6 @@ export async function user(req, res) {
 export async function users(req, res) {
   try {
     const users = await User.objects.all();
-
     // Safely parse permissions for frontend
     const parsedUsers = users.map(u => ({
       ...u,
@@ -84,7 +73,7 @@ export async function createUser(req, res) {
       return res.status(400).json({ error: "Username and password required" });
 
     const existing = await User.objects.get({username:username});
-    console.log('crateuser',existing)
+
     if (existing)
       return res.status(400).json({ error: "Username already exists" });
 
@@ -106,8 +95,8 @@ export async function updateUser(req, res) {
 
     if (!id) return res.status(400).json({ error: "User ID required" });
 
-    const existing = runQuery("SELECT * FROM users WHERE id = ?", [id]);
-    if (existing.length === 0) return res.status(404).json({ error: "User not found" });
+    const existing = await User.objects.get({id:id});
+    if (!existing) return res.status(404).json({ error: "User not found" });
 
     const updates = [];
     const values = [];
@@ -136,10 +125,9 @@ export async function updateUser(req, res) {
     if (updates.length === 0)
       return res.status(400).json({ error: "No fields to update" });
 
-    const sql = `UPDATE users SET ${updates.join(", ")} WHERE id = ?`;
-    values.push(id);
+    // runExecute(sql, values);
 
-    runExecute(sql, values);
+    await User.objects.update({id:id}, {username:username,role:role,permissions:JSON.stringify(permissions || [])})
 
     res.json({ message: "User updated successfully" });
   } catch (err) {
@@ -158,23 +146,24 @@ function safeParse(str) {
   }
 }
 
-
 // REGISTER
 export async function register(req, res) {
-  const { username, password } = req.body;
+  const { username, password,firstname,lastname,email } = req.body;
 
+  const permissions=rolePermissions['user']; // default role permissions
+  console.log('permisions',typeof JSON.stringify(permissions || []))
+  console.log("register",username,password,firstname,lastname,email)
   if (!username || !password) {
     return res.status(400).json({ error: "Username and password required" });
   }
-
+ 
   try {
-    const existingUser = runQuery("SELECT * FROM users WHERE username = ?", [username]);
-    if (existingUser.length > 0) {
+    const existingUser =  await User.objects.get({username:username});
+    if (existingUser) {
       return res.status(400).json({ error: "Username already exists" });
     }
-
     const hashedPassword = await bcrypt.hash(password, 10);
-    runExecute("INSERT INTO users (username, password) VALUES (?, ?)", [username, hashedPassword]);
+    await User.objects.create({username:username,password:hashedPassword,firstname:firstname,lastname:lastname,email:email || "email@example.com",rele:'user',permissions:JSON.stringify(permissions || [])});
 
     res.json({ message: "User registered successfully" });
   } catch (err) {
@@ -185,21 +174,15 @@ export async function register(req, res) {
 
 // LOGIN
 
-
-
 export async function login(req, res) {
   const { username, password } = req.body;
 
   try {
     // const users = runQuery("SELECT * FROM users WHERE username = ?", [username]);
     const user= await User.objects.get({username:username})
-    console.log("singin",user)
     if (!user) {
       return res.status(400).json({ error: "User not found" });
     }
-
-    // const user = users[0];
-
     // Compare passwords if hashed
     const isMatch = password === user.password || await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -219,7 +202,6 @@ export async function login(req, res) {
     res.status(500).json({ error: "Server error" });
   }
 }
-
 
 // LOGOUT (client deletes token)
 export function logout(req, res) {

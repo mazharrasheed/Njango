@@ -5,8 +5,8 @@ npm-debug.log
 yarn-error.log
 
 # Build files
-dist/
-build/
+frontend/dist/
+frontend/build/
 *.log
 
 # Python / Django

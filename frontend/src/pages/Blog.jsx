@@ -106,7 +106,7 @@ export default function Blog() {
                                 <div className="card h-100">
                                     <div className="card-body">
                                         <h5 className="card-title">{post.title}</h5>
-                                        <p className="card-text">{post.content}</p>
+                                        <p className="card-text">{post.body}</p>
                                     </div>
                                 </div>
                             </div>

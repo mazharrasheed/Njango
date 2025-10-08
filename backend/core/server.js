@@ -5,13 +5,18 @@ import { urls } from "./urls.js";
 import { authenticate } from "./middlewares/Authmiddleware.js";
 import { user,permissions } from "./../apps/auth/views.js";
 
+import { fileURLToPath } from "url";
+import path from "path";
+import { createRequire } from "module";
+
 
 // ✅ Load environment variables early
 dotenv.config();
 
-
+  console.log('app')
 export function startServer() {
   const app = express();
+  console.log('app type:', typeof app);
   // const PORT = 3000;
   const PORT = process.env.PORT || 3000;
  
@@ -46,3 +51,7 @@ app.use(cors({
     console.log(`Server started at http://localhost:${PORT}`);
   });
 }
+
+// ✅ Add this at the end
+
+  startServer();
