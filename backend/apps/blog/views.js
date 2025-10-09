@@ -1,6 +1,6 @@
 import {Blog} from "./models/blog.js";
 
-// for use in case of ORM has no requried method
+// for user custom query exicution
 // const rows = await runQuery("SELECT * FROM users WHERE id = ?", [1]);
 // await runExecute("UPDATE users SET firstname = ? WHERE id = ?", ["Alice", 1]);
 import { runExecute,runQuery } from "../../core/orm/db.js";

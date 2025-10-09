@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from "./models/user.js";
 import { defaultPermissions, customPermissions, rolePermissions} from "../../core/orm/permissionsConfig.js";
-// for use in case of ORM has no requried method
+// for user custom query exicution
 // const rows = await runQuery("SELECT * FROM users WHERE id = ?", [1]);
 // await runExecute("UPDATE users SET firstname = ? WHERE id = ?", ["Alice", 1]);
 import { runExecute,runQuery } from "../../core/orm/db.js";
