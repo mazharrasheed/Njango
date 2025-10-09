@@ -10,6 +10,11 @@ export class Product extends Model {
         created_at: new fields.DateTimeField({ autoNowAdd: true }),
         updated_at: new fields.DateTimeField({ autoNow: true }),
     };
+
+    constructor(data = {}) {
+    super();
+    Object.assign(this, data);
+  }
 }
 
 await Product.init();

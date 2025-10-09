@@ -16,3 +16,15 @@ export async function getDB() {
   }
   return dbInstance;
 }
+
+
+// Simple query helpers
+export async function runQuery(sql, params = []) {
+  const db = await getDB();
+  return db.all(sql, params); // returns array of rows
+}
+
+export async function runExecute(sql, params = []) {
+  const db = await getDB();
+  return db.run(sql, params); // for INSERT/UPDATE/DELETE
+}

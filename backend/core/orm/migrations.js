@@ -1,10 +1,9 @@
-// core/orm/migrations.js
 import fs from "fs";
 import path from "path";
-
 import { getDB } from "./db.js";
+import { ManyToManyField } from "./fields.js"; // ✅ make sure this import exists
 
-const db= await getDB()
+const db = await getDB();
 
 const MIGRATIONS_DIR = path.join(process.cwd(), "migrations");
 const INDEX_FILE = path.join(MIGRATIONS_DIR, "migrations.json");
@@ -54,10 +53,13 @@ export async function makemigrations(models = []) {
 
   for (const model of models) {
     const table = model.table;
-    const currentFields = Object.entries(model.fields).reduce((acc, [name, field]) => {
-      acc[name] = field.toSQL();
-      return acc;
-    }, {});
+    const currentFields = {};
+
+    for (const [name, field] of Object.entries(model.fields)) {
+      // ManyToManyField does NOT create a column directly
+      if (field instanceof ManyToManyField) continue;
+      currentFields[name] = field.toSQL();
+    }
 
     migrationData[table] = currentFields;
     changesDetected = true;
@@ -68,12 +70,12 @@ export async function makemigrations(models = []) {
     index.push(migrationName);
     saveMigrationIndex(index);
     console.log(`✅ Migration '${migrationName}' recorded successfully.`);
+     process.exit(0); // <-- Important
   } else {
     console.log("📦 No changes detected, skipping migration creation.");
+    process.exit(0); // <-- Important
   }
 }
-
-// 🔹 Apply migrations (just logs for now)
 
 /**
  * Helper: get column names and types from DB schema
@@ -97,11 +99,30 @@ export async function migrate(models = []) {
 
   for (const model of models) {
     await model.init(); // ensure meta + Manager ready
-
     const table = model.table;
     const fields = model.fields;
 
-    // 1️⃣ If table does not exist, create it fully
+    // ✅ STEP 1: Create through tables for ManyToMany first
+    for (const [name, field] of Object.entries(fields)) {
+      if (field instanceof ManyToManyField) {
+        const targetTable = field.to.table;
+        const throughTable = field.through ?? `${table}_${targetTable}`;
+        const sql = `
+          CREATE TABLE IF NOT EXISTS ${throughTable} (
+            ${table}_id INTEGER NOT NULL,
+            ${targetTable}_id INTEGER NOT NULL,
+            PRIMARY KEY (${table}_id, ${targetTable}_id),
+            FOREIGN KEY (${table}_id) REFERENCES ${table}(id) ON DELETE CASCADE,
+            FOREIGN KEY (${targetTable}_id) REFERENCES ${targetTable}(id) ON DELETE CASCADE
+          )
+        `;
+        await db.exec(sql);
+        console.log(`🔗 Created through table: ${throughTable}`);
+        process.exit(0); // <-- Important
+      }
+    }
+
+    // ✅ STEP 2: Handle main model tables as before
     const existing = await db.get(
       `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
       [table]
@@ -109,6 +130,7 @@ export async function migrate(models = []) {
 
     if (!existing) {
       const fieldsSQL = Object.entries(fields)
+        .filter(([_, f]) => !(f instanceof ManyToManyField)) // skip m2m
         .map(([name, field]) => `${name} ${field.toSQL()}`)
         .join(", ");
       await db.run(`CREATE TABLE ${table} (${fieldsSQL});`);
@@ -116,10 +138,10 @@ export async function migrate(models = []) {
       continue;
     }
 
-    // 2️⃣ Compare schema with model
+    // Compare schema with model
     const schema = await getTableSchema(db, table);
     const dbCols = schema.map(c => c.name);
-    const modelCols = Object.keys(fields);
+    const modelCols = Object.keys(fields).filter(k => !(fields[k] instanceof ManyToManyField));
 
     const extraCols = dbCols.filter(c => !modelCols.includes(c));
     const missingCols = modelCols.filter(c => !dbCols.includes(c));
@@ -133,17 +155,17 @@ export async function migrate(models = []) {
     if (extraCols.length) console.log(`   ➖ Extra in DB: ${extraCols.join(", ")}`);
     if (missingCols.length) console.log(`   ➕ Missing in DB: ${missingCols.join(", ")}`);
 
-    // 3️⃣ Handle drops first
+    // Handle drops first
     for (const col of extraCols) {
       console.log(`   🗑️ Dropping column: ${col}`);
       await db.run(`ALTER TABLE ${table} DROP COLUMN ${col}`);
     }
 
-    // 4️⃣ Refresh DB schema after drops
+    // Refresh DB schema after drops
     const refreshed = await getTableSchema(db, table);
     const refreshedCols = refreshed.map(c => c.name);
 
-    // 5️⃣ Handle adds
+    // Handle adds
     const stillMissing = modelCols.filter(c => !refreshedCols.includes(c));
     for (const col of stillMissing) {
       const field = fields[col];
@@ -156,8 +178,6 @@ export async function migrate(models = []) {
 
   console.log("✅ All migrations applied.");
 }
-
-
 
 export async function migrateFromFile() {
   const db = await getDB();
@@ -182,5 +202,5 @@ export async function migrateFromFile() {
   }
 
   console.log("✅ All migrations from file applied.");
+  
 }
-

@@ -10,6 +10,11 @@ export class Blog extends Model {
         body: Blog.fields.TextField({null:true}),
         author: Blog.fields.ForeignKey(User, { related_name: "blogs", on_delete: "CASCADE" }),
     };
+
+    constructor(data = {}) {
+    super();
+    Object.assign(this, data);
+  }
 }
 
 await Blog.init();

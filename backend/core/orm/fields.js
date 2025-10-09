@@ -290,26 +290,20 @@ export class ImageField extends FileField {
 /* ---------- Relational fields ---------- */
 
 export class ForeignKey extends Field {
-  // toModel: reference to Model class (should have static.table)
   constructor(toModel, options = {}) {
     super(options);
     this.to = toModel;
     this.related_name = options.related_name ?? null;
     this.on_delete = (options.on_delete || "CASCADE").toUpperCase();
   }
-  toSQL(client = "sqlite") {
-    // column stored as INTEGER referencing target id
-    let sql = this.baseSQL("INTEGER", client);
-    // add FK clause if possible (for migrations to generate)
-    try {
-      const table = this.to.table;
-      if (table) {
-        sql += ` REFERENCES ${table}(id) ON DELETE ${this.on_delete}`;
-      }
-    } catch (e) {
-      // ignore if toModel is string or not yet resolved
-    }
-    return sql;
+
+  toSQL(fieldName) {
+    // Get referenced model table name
+    const refTable = this.to.table;
+    const refField = "id"; // default primary key
+
+    // Example: author_id INTEGER REFERENCES users(id) ON DELETE CASCADE
+    return `${fieldName}_id INTEGER REFERENCES ${refTable}(${refField}) ON DELETE ${this.on_delete}`;
   }
 }
 

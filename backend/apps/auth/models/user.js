@@ -1,5 +1,6 @@
 
 import { Model } from "../../../core/orm/models.js";
+import { registerReverseRelations } from "../../../core/orm/relations.js";
 
 export class User extends Model {
     static table = "users";   // ✅ use `table` instead of `tableName`
@@ -23,6 +24,10 @@ export class User extends Model {
         console.log('User permissions:', this.permissions);
     return this.permissions.includes(perm);
   }
-}
 
+  constructor(data = {}) {
+    super();
+    Object.assign(this, data);
+  }
+}
 await User.init();
