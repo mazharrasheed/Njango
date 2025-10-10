@@ -1,6 +1,12 @@
 
 
-
+.admin-container{
+    margin-left: 340px !important;
+    width:1000px !important;
+    position: relative;
+    top:-600px;
+    overflow-x: auto;
+}
 .register-form {
     max-width: 400px;
     margin: auto;

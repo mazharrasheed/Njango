@@ -95,7 +95,7 @@ async function getTableSchema(db, table) {
  */
 export async function migrate(models = []) {
   const db = await getDB();
-  console.log("🚀 Applying migrations...");
+  console.log("🚀 Applying migrations...",models);
 
   for (const model of models) {
     await model.init(); // ensure meta + Manager ready
@@ -118,7 +118,7 @@ export async function migrate(models = []) {
         `;
         await db.exec(sql);
         console.log(`🔗 Created through table: ${throughTable}`);
-        process.exit(0); // <-- Important
+       
       }
     }
 
@@ -177,6 +177,7 @@ export async function migrate(models = []) {
   }
 
   console.log("✅ All migrations applied.");
+  process.exit(0); // <-- Important
 }
 
 export async function migrateFromFile() {

@@ -1,5 +1,6 @@
-import { useContext, useState } from 'react'
+import { useContext, useState} from 'react'
 import { useEffect } from 'react';
+import { useLocation } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -15,20 +16,34 @@ import Login from './pages/Login'
 import Navbar from './pages/Navbar'
 import Logout from './pages/Logout'
 import Posts from './pages/Posts'
-import CreateUser from './pages/CreateUser'
+import CreateUser from './pages/admin/CreateUser'
+import RequestUser from './utils/requestUser';
+import AdminNavbar from './pages/admin/Navbar';
 
 
 function App() {
 
-  const {token,setToken} = useContext(AuthContext)
+  const {token,setToken,requestUser} = useContext(AuthContext)
   console.log('form app :', token)
+
+   const location = useLocation(); // gives you current route path
+
+  console.log("Current path:", location.pathname);
+
+  const path = location.pathname;
 
   return (
     <>
-   
-      <Navbar authToken={token} />
+      
+      {path.startsWith("/admin") ? (
+        <AdminNavbar authToken={token} />
+      ) : (
+        <Navbar authToken={token} />
+      )}
+
       <Routes>
-        <Route path="/createuser" element={token ? <CreateUser /> : <Navigate to="/login" />} />
+        <Route path="/admin/createuser" element={token ? <CreateUser /> : <Navigate to="/login" />} />
+        <Route path="/" element={token ? <Blog /> : <Navigate to="/login" />} />
         <Route path="/blog" element={token ? <Blog /> : <Navigate to="/login" />} />
         <Route path="/profile" element={token ? <Profile /> : <Navigate to="/login" />} />
         <Route path="/posts" element={token ? <Posts /> : <Navigate to="/login" />} />
